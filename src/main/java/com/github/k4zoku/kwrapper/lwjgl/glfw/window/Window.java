@@ -4,7 +4,10 @@ import com.github.k4zoku.kwrapper.lwjgl.common.Destroyable;
 import com.github.k4zoku.kwrapper.lwjgl.common.Geometry;
 import com.github.k4zoku.kwrapper.lwjgl.common.Position;
 import com.github.k4zoku.kwrapper.lwjgl.common.Size;
-import com.github.k4zoku.kwrapper.lwjgl.glfw.*;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.ContentScale;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.Cursor;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.Monitor;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.PointerHandle;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -143,7 +146,7 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public Monitor getMonitor() {
-        return new Monitor(glfwGetWindowMonitor(getHandle()));
+        return Monitor.getWindowMonitor(this);
     }
 
     public float getOpacity() {

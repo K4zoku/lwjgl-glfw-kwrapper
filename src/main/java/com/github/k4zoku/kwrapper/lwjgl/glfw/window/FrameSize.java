@@ -1,4 +1,4 @@
-package com.github.k4zoku.kwrapper.lwjgl.glfw;
+package com.github.k4zoku.kwrapper.lwjgl.glfw.window;
 
 public class FrameSize {
 

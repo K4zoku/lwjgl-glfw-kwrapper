@@ -1,16 +1,13 @@
 package com.github.k4zoku.kwrapper.lwjgl.glfw;
 
-import com.github.k4zoku.kwrapper.lwjgl.common.pair.UnaryPair;
-
-public class ContentScale extends UnaryPair<Float> {
+public class ContentScale {
 
     private final float xscale;
     private final float yscale;
 
-    public ContentScale(Float key, Float value) {
-        super(key, value);
-        this.xscale = key;
-        this.yscale = value;
+    public ContentScale(Float xscale, Float yscale) {
+        this.xscale = xscale;
+        this.yscale = yscale;
     }
 
     public float getXscale() {
