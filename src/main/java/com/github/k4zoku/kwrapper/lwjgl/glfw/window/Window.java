@@ -29,16 +29,16 @@ public class Window extends Pointer implements Destroyable {
 
     private boolean destroyed;
 
-    private Window(long handle, boolean destroyed) {
-        super(handle);
-        this.destroyed = destroyed;
+    private Window(long pointer) {
+        super(pointer);
+        this.destroyed = false;
         if (getPointer() == NULL) {
             throw new GLFWRuntimeException("Failed to create the GLFW window");
         }
     }
 
     public Window(int windowWidth, int windowHeight, CharSequence windowTitle, long monitor, long share) {
-        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor, share), false);
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor, share));
     }
 
     public Window(int windowWidth, int windowHeight, CharSequence windowTitle, @Nullable Monitor monitor, long share) {
@@ -50,7 +50,7 @@ public class Window extends Pointer implements Destroyable {
     }
 
     public Window(int windowWidth, int windowHeight, CharSequence windowTitle) {
-        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL), false);
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL));
     }
 
     public Window(Size<Integer> windowSize, CharSequence windowTitle) {
@@ -58,7 +58,7 @@ public class Window extends Pointer implements Destroyable {
     }
 
     public Window(int windowWidth, int windowHeight, ByteBuffer windowTitle, Monitor monitor, long share) {
-        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getPointer() : NULL, share), false);
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getPointer() : NULL, share));
     }
 
     public Window(Size<Integer> windowSize, ByteBuffer windowTitle, Monitor monitor, long share) {
@@ -66,7 +66,7 @@ public class Window extends Pointer implements Destroyable {
     }
 
     public Window(int windowWidth, int windowHeight, ByteBuffer windowTitle) {
-        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL), false);
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL));
     }
 
     public Window(Size<Integer> windowSize, ByteBuffer windowTitle) {
