@@ -365,13 +365,13 @@ public class Window extends PointerHandle implements Destroyable {
         return new Geometry<>(position, size);
     }
 
-    public void setGeometry(@NotNull Geometry<Integer> geometry) {
-        setGeometry(geometry.getX(), geometry.getY(), geometry.getWidth(), geometry.getHeight());
-    }
-
     public void setGeometry(int x, int y, int width, int height) {
         setPosition(x, y);
         setSize(width, height);
+    }
+
+    public void setGeometry(@NotNull Geometry<Integer> geometry) {
+        setGeometry(geometry.getX(), geometry.getY(), geometry.getWidth(), geometry.getHeight());
     }
 
     public final boolean isDestroyed() {
