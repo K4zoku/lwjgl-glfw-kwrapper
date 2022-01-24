@@ -1,6 +1,6 @@
 package com.github.k4zoku.kwrapper.lwjgl.example;
 
-import com.github.k4zoku.kwrapper.lwjgl.common.Size;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Size;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.window.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -77,7 +77,7 @@ public class LWJGLExample {
         });
 
         // Get the resolution of the primary monitor
-        GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        GLFWVidMode vidMode = window.getMonitor().getVideoMode();
         assert vidMode != null;
         Size<Integer> windowSize = window.getSize();
 
