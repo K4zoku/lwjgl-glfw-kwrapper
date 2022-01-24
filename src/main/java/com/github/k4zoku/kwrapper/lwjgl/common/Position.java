@@ -1,6 +1,6 @@
 package com.github.k4zoku.kwrapper.lwjgl.common;
 
-import edu.fpt.se1603.group6.wrapper.common.pair.UnaryPair;
+import com.github.k4zoku.kwrapper.lwjgl.common.pair.UnaryPair;
 
 public class Position<T extends Number> extends UnaryPair<T> {
     private final T x;

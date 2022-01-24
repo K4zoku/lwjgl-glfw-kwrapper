@@ -13,6 +13,7 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -30,6 +31,22 @@ public class Window extends PointerHandle implements Destroyable {
         if (getHandle() == NULL) {
             throw new GLFWRuntimeException("Failed to create the GLFW window");
         }
+    }
+
+    public void show() {
+        glfwShowWindow(getHandle());
+    }
+
+    public boolean shouldClose() {
+        return glfwWindowShouldClose(getHandle());
+    }
+
+    public void swapBuffers() {
+        glfwSwapBuffers(getHandle());
+    }
+
+    public void freeCallbacks() {
+        glfwFreeCallbacks(getHandle());
     }
 
     public void setTitle(CharSequence title) {
@@ -242,6 +259,7 @@ public class Window extends PointerHandle implements Destroyable {
     public void setScrollCallback(GLFWScrollCallbackI callback) {
         glfwSetScrollCallback(getHandle(), callback);
     }
+
 
     public final boolean isDestroyed() {
         return this.destroyed;
