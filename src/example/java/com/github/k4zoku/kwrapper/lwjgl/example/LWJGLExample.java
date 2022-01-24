@@ -1,7 +1,7 @@
 package com.github.k4zoku.kwrapper.lwjgl.example;
 
 import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Size;
-import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.monitor.Monitor;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.window.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -65,11 +65,7 @@ public class LWJGLExample {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
         // Create window
-        try {
-            window = new Window(640, 480, "GLFW Test");
-        } catch (GLFWRuntimeException e) {
-            throw new IllegalStateException(e);
-        }
+        window = new Window(640, 480, "GLFW Test");
 
         window.setKeyCallback((key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
@@ -77,7 +73,7 @@ public class LWJGLExample {
         });
 
         // Get the resolution of the primary monitor
-        GLFWVidMode vidMode = window.getMonitor().getVideoMode();
+        GLFWVidMode vidMode = Monitor.getPrimaryMonitor().getVideoMode();
         assert vidMode != null;
         Size<Integer> windowSize = window.getSize();
 
