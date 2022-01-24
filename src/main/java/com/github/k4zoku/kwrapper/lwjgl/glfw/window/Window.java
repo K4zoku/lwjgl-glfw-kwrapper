@@ -37,7 +37,7 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public Window(int windowWidth, int windowHeight, CharSequence windowTitle, @Nullable Monitor monitor, long share) {
-        this(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getHandle() : NULL, share);
+        this(windowWidth, windowHeight, windowTitle, monitor == null ? NULL : monitor.getHandle(), share);
     }
 
     public Window(@NotNull Size<Integer> windowSize, CharSequence windowTitle, Monitor monitor, long share) {
