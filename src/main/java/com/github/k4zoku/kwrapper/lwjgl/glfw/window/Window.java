@@ -1,9 +1,10 @@
-package com.github.k4zoku.kwrapper.lwjgl.glfw;
+package com.github.k4zoku.kwrapper.lwjgl.glfw.window;
 
 import com.github.k4zoku.kwrapper.lwjgl.common.Destroyable;
 import com.github.k4zoku.kwrapper.lwjgl.common.Geometry;
 import com.github.k4zoku.kwrapper.lwjgl.common.Position;
 import com.github.k4zoku.kwrapper.lwjgl.common.Size;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.*;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.*;
@@ -248,8 +249,9 @@ public class Window extends PointerHandle implements Destroyable {
         glfwSetInputMode(getHandle(), mode, value);
     }
 
-    public void setKeyCallback(GLFWKeyCallbackI callback) {
-        glfwSetKeyCallback(getHandle(), callback);
+    public void setKeyCallback(KeyCallback callback) {
+        GLFWKeyCallbackI realCallback = (window, key, scancode, action, mods) -> callback.invoke(key, scancode, action, mods);
+        glfwSetKeyCallback(getHandle(), realCallback);
     }
 
     public void setMouseButtonCallback(GLFWMouseButtonCallbackI callback) {
@@ -271,5 +273,9 @@ public class Window extends PointerHandle implements Destroyable {
         }
         glfwDestroyWindow(getHandle());
         this.destroyed = true;
+    }
+
+    public void setShouldClose(boolean shouldClose) {
+        glfwSetWindowShouldClose(getHandle(), shouldClose);
     }
 }
