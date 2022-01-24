@@ -1,4 +1,4 @@
-package com.github.k4zoku.kwrapper.lwjgl.glfw.test;
+package com.github.k4zoku.kwrapper.lwjgl.example;
 
 import com.github.k4zoku.kwrapper.lwjgl.common.Size;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.Window;
@@ -11,16 +11,15 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class GLFWTest {
+public class LWJGLExample {
 
     private Window window;
 
     public static void main(String[] args) {
-        new GLFWTest().run();
+        new LWJGLExample().run();
     }
 
     public void init() {
-        System.out.println("Initializing...");
         // Set up an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
