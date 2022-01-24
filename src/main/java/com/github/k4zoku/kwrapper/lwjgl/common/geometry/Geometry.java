@@ -1,4 +1,4 @@
-package com.github.k4zoku.kwrapper.lwjgl.common;
+package com.github.k4zoku.kwrapper.lwjgl.common.geometry;
 
 public class Geometry<T extends Number> {
 

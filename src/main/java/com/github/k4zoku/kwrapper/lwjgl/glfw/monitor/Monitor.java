@@ -1,8 +1,10 @@
-package com.github.k4zoku.kwrapper.lwjgl.glfw;
+package com.github.k4zoku.kwrapper.lwjgl.glfw.monitor;
 
-import com.github.k4zoku.kwrapper.lwjgl.common.Geometry;
-import com.github.k4zoku.kwrapper.lwjgl.common.Position;
-import com.github.k4zoku.kwrapper.lwjgl.common.Size;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Geometry;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Position;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Size;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.common.geometry.ContentScale;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.common.pointer.Pointer;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.window.Window;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFWGammaRamp;
@@ -14,14 +16,14 @@ import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Monitor extends PointerHandle {
+public class Monitor extends Pointer {
 
     private Monitor(long handle) {
         super(handle);
     }
 
     public static Monitor getWindowMonitor(Window window) {
-        return new Monitor(glfwGetWindowMonitor(window.getHandle()));
+        return new Monitor(glfwGetWindowMonitor(window.getPointer()));
     }
 
     public static Monitor getPrimaryMonitor() {
@@ -39,27 +41,27 @@ public class Monitor extends PointerHandle {
     }
 
     public GLFWGammaRamp getGammaRamp() {
-        return glfwGetGammaRamp(getHandle());
+        return glfwGetGammaRamp(getPointer());
     }
 
     public ContentScale getContentScale() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer xscale = stack.mallocFloat(1);
             FloatBuffer yscale = stack.mallocFloat(1);
-            glfwGetMonitorContentScale(getHandle(), xscale, yscale);
+            glfwGetMonitorContentScale(getPointer(), xscale, yscale);
             return new ContentScale(xscale.get(), yscale.get());
         }
     }
 
     public String getName() {
-        return glfwGetMonitorName(getHandle());
+        return glfwGetMonitorName(getPointer());
     }
 
     public Size<Integer> getPhysicalSize() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
-            glfwGetMonitorPhysicalSize(getHandle(), width, height);
+            glfwGetMonitorPhysicalSize(getPointer(), width, height);
             return new Size<>(width.get(), height.get());
         }
     }
@@ -68,7 +70,7 @@ public class Monitor extends PointerHandle {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer x = stack.mallocInt(1);
             IntBuffer y = stack.mallocInt(1);
-            glfwGetMonitorPos(getHandle(), x, y);
+            glfwGetMonitorPos(getPointer(), x, y);
             return new Position<>(x.get(), y.get());
         }
     }
@@ -79,29 +81,29 @@ public class Monitor extends PointerHandle {
             IntBuffer y = stack.mallocInt(1);
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
-            glfwGetMonitorWorkarea(getHandle(), x, y, width, height);
+            glfwGetMonitorWorkarea(getPointer(), x, y, width, height);
             return new Geometry<>(x.get(), y.get(), width.get(), height.get());
         }
     }
 
     public GLFWVidMode getVideoMode() {
-        return glfwGetVideoMode(getHandle());
+        return glfwGetVideoMode(getPointer());
     }
 
     public GLFWVidMode.Buffer getVideoModes() {
-        return glfwGetVideoModes(getHandle());
+        return glfwGetVideoModes(getPointer());
     }
 
     public void setGamma(float gamma) {
-        glfwSetGamma(getHandle(), gamma);
+        glfwSetGamma(getPointer(), gamma);
     }
 
     public void setGammaRamp(GLFWGammaRamp ramp) {
-        glfwSetGammaRamp(getHandle(), ramp);
+        glfwSetGammaRamp(getPointer(), ramp);
     }
 
     public void setUserPointer(long pointer) {
-        glfwSetMonitorUserPointer(getHandle(), pointer);
+        glfwSetMonitorUserPointer(getPointer(), pointer);
     }
 
 }

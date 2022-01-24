@@ -1,6 +1,7 @@
-package com.github.k4zoku.kwrapper.lwjgl.glfw;
+package com.github.k4zoku.kwrapper.lwjgl.glfw.cursor;
 
 import com.github.k4zoku.kwrapper.lwjgl.common.Destroyable;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.common.pointer.Pointer;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
 import org.lwjgl.glfw.GLFWImage;
 
@@ -8,13 +9,13 @@ import static org.lwjgl.glfw.GLFW.glfwCreateCursor;
 import static org.lwjgl.glfw.GLFW.glfwDestroyCursor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Cursor extends PointerHandle implements Destroyable {
+public class Cursor extends Pointer implements Destroyable {
 
     private boolean destroyed;
 
     private Cursor(long handle) {
         super(handle);
-        if (getHandle() == NULL) {
+        if (getPointer() == NULL) {
             throw new GLFWRuntimeException("Cannot create cursor");
         }
         this.destroyed = false;
@@ -35,7 +36,7 @@ public class Cursor extends PointerHandle implements Destroyable {
             return;
         }
 
-        glfwDestroyCursor(getHandle());
+        glfwDestroyCursor(getPointer());
         this.destroyed = true;
     }
 }

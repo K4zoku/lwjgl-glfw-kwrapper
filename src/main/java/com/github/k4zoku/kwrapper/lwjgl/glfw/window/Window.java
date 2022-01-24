@@ -1,14 +1,16 @@
 package com.github.k4zoku.kwrapper.lwjgl.glfw.window;
 
 import com.github.k4zoku.kwrapper.lwjgl.common.Destroyable;
-import com.github.k4zoku.kwrapper.lwjgl.common.Geometry;
-import com.github.k4zoku.kwrapper.lwjgl.common.Position;
-import com.github.k4zoku.kwrapper.lwjgl.common.Size;
-import com.github.k4zoku.kwrapper.lwjgl.glfw.ContentScale;
-import com.github.k4zoku.kwrapper.lwjgl.glfw.Cursor;
-import com.github.k4zoku.kwrapper.lwjgl.glfw.Monitor;
-import com.github.k4zoku.kwrapper.lwjgl.glfw.PointerHandle;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Geometry;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Position;
+import com.github.k4zoku.kwrapper.lwjgl.common.geometry.Size;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.common.geometry.ContentScale;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.common.pointer.Pointer;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.cursor.Cursor;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.monitor.Monitor;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.window.callback.KeyCallback;
+import com.github.k4zoku.kwrapper.lwjgl.glfw.window.geometry.FrameSize;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.*;
@@ -23,14 +25,14 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-public class Window extends PointerHandle implements Destroyable {
+public class Window extends Pointer implements Destroyable {
 
     private boolean destroyed;
 
     private Window(long handle, boolean destroyed) {
         super(handle);
         this.destroyed = destroyed;
-        if (getHandle() == NULL) {
+        if (getPointer() == NULL) {
             throw new GLFWRuntimeException("Failed to create the GLFW window");
         }
     }
@@ -40,7 +42,7 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public Window(int windowWidth, int windowHeight, CharSequence windowTitle, @Nullable Monitor monitor, long share) {
-        this(windowWidth, windowHeight, windowTitle, monitor == null ? NULL : monitor.getHandle(), share);
+        this(windowWidth, windowHeight, windowTitle, monitor == null ? NULL : monitor.getPointer(), share);
     }
 
     public Window(@NotNull Size<Integer> windowSize, CharSequence windowTitle, Monitor monitor, long share) {
@@ -56,7 +58,7 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public Window(int windowWidth, int windowHeight, ByteBuffer windowTitle, Monitor monitor, long share) {
-        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getHandle() : NULL, share), false);
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getPointer() : NULL, share), false);
     }
 
     public Window(Size<Integer> windowSize, ByteBuffer windowTitle, Monitor monitor, long share) {
@@ -72,26 +74,26 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public void setIcon(GLFWImage.Buffer icon) {
-        glfwSetWindowIcon(getHandle(), icon);
+        glfwSetWindowIcon(getPointer(), icon);
     }
 
     public void focus() {
-        glfwFocusWindow(getHandle());
+        glfwFocusWindow(getPointer());
     }
 
     public String getClipboardString() {
-        return glfwGetClipboardString(getHandle());
+        return glfwGetClipboardString(getPointer());
     }
 
     public void setClipboardString(CharSequence string) {
-        glfwSetClipboardString(getHandle(), string);
+        glfwSetClipboardString(getPointer(), string);
     }
 
     public Position<Double> getCursorPosition() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             DoubleBuffer x = stack.mallocDouble(1);
             DoubleBuffer y = stack.mallocDouble(1);
-            glfwGetCursorPos(getHandle(), x, y);
+            glfwGetCursorPos(getPointer(), x, y);
             return new Position<>(x.get(), y.get());
         }
     }
@@ -104,32 +106,32 @@ public class Window extends PointerHandle implements Destroyable {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
-            glfwGetFramebufferSize(getHandle(), width, height);
+            glfwGetFramebufferSize(getPointer(), width, height);
             return new Size<>(width.get(), height.get());
         }
     }
 
     public int getInputMode(int mode) {
-        return glfwGetInputMode(getHandle(), mode);
+        return glfwGetInputMode(getPointer(), mode);
     }
 
     public int getKey(int key) {
-        return glfwGetKey(getHandle(), key);
+        return glfwGetKey(getPointer(), key);
     }
 
     public int getMouseButton(int button) {
-        return glfwGetMouseButton(getHandle(), button);
+        return glfwGetMouseButton(getPointer(), button);
     }
 
     public int getAttribute(int attribute) {
-        return glfwGetWindowAttrib(getHandle(), attribute);
+        return glfwGetWindowAttrib(getPointer(), attribute);
     }
 
     public ContentScale getContentScale() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer xscale = stack.mallocFloat(1);
             FloatBuffer yscale = stack.mallocFloat(1);
-            glfwGetMonitorContentScale(getHandle(), xscale, yscale);
+            glfwGetMonitorContentScale(getPointer(), xscale, yscale);
             return new ContentScale(xscale.get(), yscale.get());
         }
     }
@@ -140,7 +142,7 @@ public class Window extends PointerHandle implements Destroyable {
             IntBuffer top = stack.mallocInt(1);
             IntBuffer right = stack.mallocInt(1);
             IntBuffer bottom = stack.mallocInt(1);
-            glfwGetWindowFrameSize(getHandle(), left, top, right, bottom);
+            glfwGetWindowFrameSize(getPointer(), left, top, right, bottom);
             return new FrameSize(left.get(), top.get(), right.get(), bottom.get());
         }
     }
@@ -150,14 +152,14 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public float getOpacity() {
-        return glfwGetWindowOpacity(getHandle());
+        return glfwGetWindowOpacity(getPointer());
     }
 
     public Position<Integer> getPosition() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer x = stack.mallocInt(1);
             IntBuffer y = stack.mallocInt(1);
-            glfwGetWindowPos(getHandle(), x, y);
+            glfwGetWindowPos(getPointer(), x, y);
             return new Position<>(x.get(), y.get());
         }
     }
@@ -166,77 +168,77 @@ public class Window extends PointerHandle implements Destroyable {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1);
             IntBuffer height = stack.mallocInt(1);
-            glfwGetWindowSize(getHandle(), width, height);
+            glfwGetWindowSize(getPointer(), width, height);
             return new Size<>(width.get(), height.get());
         }
     }
 
     public long getUserPointer() {
-        return glfwGetWindowUserPointer(getHandle());
+        return glfwGetWindowUserPointer(getPointer());
     }
 
     public void hide() {
-        glfwHideWindow(getHandle());
+        glfwHideWindow(getPointer());
     }
 
     public void iconify() {
-        glfwIconifyWindow(getHandle());
+        glfwIconifyWindow(getPointer());
     }
 
     public void makeContextCurrent() {
-        glfwMakeContextCurrent(getHandle());
+        glfwMakeContextCurrent(getPointer());
     }
 
     public void maximize() {
-        glfwMaximizeWindow(getHandle());
+        glfwMaximizeWindow(getPointer());
     }
 
     public void requestAttention() {
-        glfwRequestWindowAttention(getHandle());
+        glfwRequestWindowAttention(getPointer());
     }
 
     public void restore() {
-        glfwRestoreWindow(getHandle());
+        glfwRestoreWindow(getPointer());
     }
 
     public void setCharCallback(GLFWCharCallbackI callback) {
-        glfwSetCharCallback(getHandle(), callback);
+        glfwSetCharCallback(getPointer(), callback);
     }
 
     public void setCharModsCallback(GLFWCharModsCallbackI callback) {
-        glfwSetCharModsCallback(getHandle(), callback);
+        glfwSetCharModsCallback(getPointer(), callback);
     }
 
     public void setCursor(Cursor cursor) {
-        glfwSetCursor(getHandle(), cursor.getHandle());
+        glfwSetCursor(getPointer(), cursor.getPointer());
     }
 
     public void setCursorEnterCallback(GLFWCursorEnterCallbackI callback) {
-        glfwSetCursorEnterCallback(getHandle(), callback);
+        glfwSetCursorEnterCallback(getPointer(), callback);
     }
 
     public void setCursorPosition(int x, int y) {
-        glfwSetCursorPos(getHandle(), x, y);
+        glfwSetCursorPos(getPointer(), x, y);
     }
 
     public void setCursorPositionCallback(GLFWCursorPosCallbackI callback) {
-        glfwSetCursorPosCallback(getHandle(), callback);
+        glfwSetCursorPosCallback(getPointer(), callback);
     }
 
     public void setDropCallback(GLFWDropCallbackI callback) {
-        glfwSetDropCallback(getHandle(), callback);
+        glfwSetDropCallback(getPointer(), callback);
     }
 
     public void setFrameBufferSizeCallback(GLFWFramebufferSizeCallbackI callback) {
-        glfwSetFramebufferSizeCallback(getHandle(), callback);
+        glfwSetFramebufferSizeCallback(getPointer(), callback);
     }
 
     public void setInputMode(int mode, int value) {
-        glfwSetInputMode(getHandle(), mode, value);
+        glfwSetInputMode(getPointer(), mode, value);
     }
 
     public void setKeyCallback(GLFWKeyCallbackI callback) {
-        glfwSetKeyCallback(getHandle(), callback);
+        glfwSetKeyCallback(getPointer(), callback);
     }
 
     public void setKeyCallback(KeyCallback callback) {
@@ -244,43 +246,43 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public void setMouseButtonCallback(GLFWMouseButtonCallbackI callback) {
-        glfwSetMouseButtonCallback(getHandle(), callback);
+        glfwSetMouseButtonCallback(getPointer(), callback);
     }
 
     public void setScrollCallback(GLFWScrollCallbackI callback) {
-        glfwSetScrollCallback(getHandle(), callback);
+        glfwSetScrollCallback(getPointer(), callback);
     }
 
     public void setAspectRatio(int numer, int denom) {
-        glfwSetWindowAspectRatio(getHandle(), numer, denom);
+        glfwSetWindowAspectRatio(getPointer(), numer, denom);
     }
 
     public void setAttribute(int attribute, int value) {
-        glfwSetWindowAttrib(getHandle(), attribute, value);
+        glfwSetWindowAttrib(getPointer(), attribute, value);
     }
 
     public void setCloseCallback(GLFWWindowCloseCallbackI callback) {
-        glfwSetWindowCloseCallback(getHandle(), callback);
+        glfwSetWindowCloseCallback(getPointer(), callback);
     }
 
     public void setContentScaleCallback(GLFWWindowContentScaleCallbackI callback) {
-        glfwSetWindowContentScaleCallback(getHandle(), callback);
+        glfwSetWindowContentScaleCallback(getPointer(), callback);
     }
 
     public void setFocusCallback(GLFWWindowFocusCallbackI callback) {
-        glfwSetWindowFocusCallback(getHandle(), callback);
+        glfwSetWindowFocusCallback(getPointer(), callback);
     }
 
     public void setIconifyCallback(GLFWWindowIconifyCallbackI callback) {
-        glfwSetWindowIconifyCallback(getHandle(), callback);
+        glfwSetWindowIconifyCallback(getPointer(), callback);
     }
 
     public void setMaximizeCallback(GLFWWindowMaximizeCallbackI callback) {
-        glfwSetWindowMaximizeCallback(getHandle(), callback);
+        glfwSetWindowMaximizeCallback(getPointer(), callback);
     }
 
     public void setMonitor(Monitor monitor, int xpos, int ypos, int width, int height, int refreshRate) {
-        glfwSetWindowMonitor(getHandle(), monitor.getHandle(), xpos, ypos, width, height, refreshRate);
+        glfwSetWindowMonitor(getPointer(), monitor.getPointer(), xpos, ypos, width, height, refreshRate);
     }
 
     public void setMonitor(Monitor monitor, Position<Integer> position, Size<Integer> size, int refreshRate) {
@@ -292,11 +294,11 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public void setOpacity(float opacity) {
-        glfwSetWindowOpacity(getHandle(), opacity);
+        glfwSetWindowOpacity(getPointer(), opacity);
     }
 
     public void setPosition(int x, int y) {
-        glfwSetWindowPos(getHandle(), x, y);
+        glfwSetWindowPos(getPointer(), x, y);
     }
 
     public void setPosition(@NotNull Position<Integer> position) {
@@ -304,15 +306,15 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public void setPositionCallback(GLFWWindowPosCallbackI callback) {
-        glfwSetWindowPosCallback(getHandle(), callback);
+        glfwSetWindowPosCallback(getPointer(), callback);
     }
 
     public void setRefreshCallback(GLFWWindowRefreshCallbackI callback) {
-        glfwSetWindowRefreshCallback(getHandle(), callback);
+        glfwSetWindowRefreshCallback(getPointer(), callback);
     }
 
     public void setSize(int width, int height) {
-        glfwSetWindowSize(getHandle(), width, height);
+        glfwSetWindowSize(getPointer(), width, height);
     }
 
     public void setSize(@NotNull Size<Integer> size) {
@@ -320,11 +322,11 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public void setSizeCallback(GLFWWindowSizeCallbackI callback) {
-        glfwSetWindowSizeCallback(getHandle(), callback);
+        glfwSetWindowSizeCallback(getPointer(), callback);
     }
 
     public void setSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) {
-        glfwSetWindowSizeLimits(getHandle(), maxWidth, maxHeight, maxWidth, maxHeight);
+        glfwSetWindowSizeLimits(getPointer(), maxWidth, maxHeight, maxWidth, maxHeight);
     }
 
     public void setSizeLimits(Size<Integer> minSize, Size<Integer> maxSize) {
@@ -332,31 +334,31 @@ public class Window extends PointerHandle implements Destroyable {
     }
 
     public void setTitle(CharSequence title) {
-        glfwSetWindowTitle(getHandle(), title);
+        glfwSetWindowTitle(getPointer(), title);
     }
 
     public void setTitle(ByteBuffer title) {
-        glfwSetWindowTitle(getHandle(), title);
+        glfwSetWindowTitle(getPointer(), title);
     }
 
     public void setUserPointer(long pointer) {
-        glfwSetWindowUserPointer(getHandle(), pointer);
+        glfwSetWindowUserPointer(getPointer(), pointer);
     }
 
     public void show() {
-        glfwShowWindow(getHandle());
+        glfwShowWindow(getPointer());
     }
 
     public void swapBuffers() {
-        glfwSwapBuffers(getHandle());
+        glfwSwapBuffers(getPointer());
     }
 
     public boolean shouldClose() {
-        return glfwWindowShouldClose(getHandle());
+        return glfwWindowShouldClose(getPointer());
     }
 
     public void setShouldClose(boolean shouldClose) {
-        glfwSetWindowShouldClose(getHandle(), shouldClose);
+        glfwSetWindowShouldClose(getPointer(), shouldClose);
     }
 
     public Geometry<Integer> getGeometry() {
@@ -382,12 +384,12 @@ public class Window extends PointerHandle implements Destroyable {
         if (isDestroyed()) {
             return;
         }
-        glfwDestroyWindow(getHandle());
+        glfwDestroyWindow(getPointer());
         this.destroyed = true;
     }
 
     public void freeCallbacks() {
-        glfwFreeCallbacks(getHandle());
+        glfwFreeCallbacks(getPointer());
     }
 
 }
