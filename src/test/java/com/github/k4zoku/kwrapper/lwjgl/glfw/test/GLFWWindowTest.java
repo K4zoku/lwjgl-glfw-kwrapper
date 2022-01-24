@@ -22,7 +22,7 @@ class GLFWWindowTest {
             window = null;
         }
         assertNotNull(window);
-        assertNotEquals(NULL, window.getHandle());
+        assertNotEquals(NULL, window.getPointer());
     }
 
 
