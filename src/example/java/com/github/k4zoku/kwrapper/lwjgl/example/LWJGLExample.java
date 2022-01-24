@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class LWJGLExample {
 
@@ -67,7 +66,7 @@ public class LWJGLExample {
 
         // Create window
         try {
-            window = new Window(640, 480, "GLFW Test", NULL, NULL);
+            window = new Window(640, 480, "GLFW Test");
         } catch (GLFWRuntimeException e) {
             throw new IllegalStateException(e);
         }

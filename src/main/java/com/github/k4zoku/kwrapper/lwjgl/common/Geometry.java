@@ -15,20 +15,28 @@ public class Geometry<T extends Number> {
         this.size = size;
     }
 
+    public Position<T> getPosition() {
+        return this.position;
+    }
+
+    public Size<T> getSize() {
+        return this.size;
+    }
+
     public T getX() {
-        return position.getX();
+        return this.position.getX();
     }
 
     public T getY() {
-        return position.getY();
+        return this.position.getY();
     }
 
     public T getWidth() {
-        return size.getWidth();
+        return this.size.getWidth();
     }
 
     public T getHeight() {
-        return size.getHeight();
+        return this.size.getHeight();
     }
 
 }

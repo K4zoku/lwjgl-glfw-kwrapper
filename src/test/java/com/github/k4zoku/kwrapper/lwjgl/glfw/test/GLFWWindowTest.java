@@ -17,7 +17,7 @@ class GLFWWindowTest {
         // Create new window
         Window window;
         try {
-            window = new Window(640, 480, "Test", NULL, NULL);
+            window = new Window(640, 480, "Test");
         } catch (GLFWRuntimeException e) {
             window = null;
         }

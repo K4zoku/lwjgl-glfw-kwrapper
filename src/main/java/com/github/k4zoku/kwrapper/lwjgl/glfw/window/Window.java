@@ -7,9 +7,11 @@ import com.github.k4zoku.kwrapper.lwjgl.common.Size;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.*;
 import com.github.k4zoku.kwrapper.lwjgl.glfw.exception.GLFWRuntimeException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryStack;
 
+import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -22,10 +24,6 @@ public class Window extends PointerHandle implements Destroyable {
 
     private boolean destroyed;
 
-    public Window(int windowWidth, int windowHeight, CharSequence windowTitle, long monitor, long share) {
-        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor, share), false);
-    }
-
     private Window(long handle, boolean destroyed) {
         super(handle);
         this.destroyed = destroyed;
@@ -34,24 +32,40 @@ public class Window extends PointerHandle implements Destroyable {
         }
     }
 
-    public void show() {
-        glfwShowWindow(getHandle());
+    public Window(int windowWidth, int windowHeight, CharSequence windowTitle, long monitor, long share) {
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor, share), false);
     }
 
-    public boolean shouldClose() {
-        return glfwWindowShouldClose(getHandle());
+    public Window(int windowWidth, int windowHeight, CharSequence windowTitle, @Nullable Monitor monitor, long share) {
+        this(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getHandle() : NULL, share);
     }
 
-    public void swapBuffers() {
-        glfwSwapBuffers(getHandle());
+    public Window(@NotNull Size<Integer> windowSize, CharSequence windowTitle, Monitor monitor, long share) {
+        this(windowSize.getWidth(), windowSize.getHeight(), windowTitle, monitor, share);
     }
 
-    public void freeCallbacks() {
-        glfwFreeCallbacks(getHandle());
+    public Window(int windowWidth, int windowHeight, CharSequence windowTitle) {
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL), false);
     }
 
-    public void setTitle(CharSequence title) {
-        glfwSetWindowTitle(getHandle(), title);
+    public Window(Size<Integer> windowSize, CharSequence windowTitle) {
+        this(windowSize.getWidth(), windowSize.getHeight(), windowTitle);
+    }
+
+    public Window(int windowWidth, int windowHeight, ByteBuffer windowTitle, Monitor monitor, long share) {
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, monitor != null ? monitor.getHandle() : NULL, share), false);
+    }
+
+    public Window(Size<Integer> windowSize, ByteBuffer windowTitle, Monitor monitor, long share) {
+        this(windowSize.getWidth(), windowSize.getHeight(), windowTitle, monitor, share);
+    }
+
+    public Window(int windowWidth, int windowHeight, ByteBuffer windowTitle) {
+        this(glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL), false);
+    }
+
+    public Window(Size<Integer> windowSize, ByteBuffer windowTitle) {
+        this(windowSize.getWidth(), windowSize.getHeight(), windowTitle);
     }
 
     public void setIcon(GLFWImage.Buffer icon) {
@@ -145,14 +159,6 @@ public class Window extends PointerHandle implements Destroyable {
         }
     }
 
-    public void setPosition(@NotNull Position<Integer> position) {
-        setPosition(position.getX(), position.getY());
-    }
-
-    public void setPosition(int x, int y) {
-        glfwSetWindowPos(getHandle(), x, y);
-    }
-
     public Size<Integer> getSize() {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer width = stack.mallocInt(1);
@@ -160,29 +166,6 @@ public class Window extends PointerHandle implements Destroyable {
             glfwGetWindowSize(getHandle(), width, height);
             return new Size<>(width.get(), height.get());
         }
-    }
-
-    public void setSize(@NotNull Size<Integer> size) {
-        setSize(size.getWidth(), size.getHeight());
-    }
-
-    public void setSize(int width, int height) {
-        glfwSetWindowSize(getHandle(), width, height);
-    }
-
-    public Geometry<Integer> getGeometry() {
-        Size<Integer> size = getSize();
-        Position<Integer> position = getPosition();
-        return new Geometry<>(position, size);
-    }
-
-    public void setGeometry(@NotNull Geometry<Integer> geometry) {
-        setGeometry(geometry.getX(), geometry.getY(), geometry.getWidth(), geometry.getHeight());
-    }
-
-    public void setGeometry(int x, int y, int width, int height) {
-        setPosition(x, y);
-        setSize(width, height);
     }
 
     public long getUserPointer() {
@@ -249,9 +232,12 @@ public class Window extends PointerHandle implements Destroyable {
         glfwSetInputMode(getHandle(), mode, value);
     }
 
+    public void setKeyCallback(GLFWKeyCallbackI callback) {
+        glfwSetKeyCallback(getHandle(), callback);
+    }
+
     public void setKeyCallback(KeyCallback callback) {
-        GLFWKeyCallbackI realCallback = (window, key, scancode, action, mods) -> callback.invoke(key, scancode, action, mods);
-        glfwSetKeyCallback(getHandle(), realCallback);
+        setKeyCallback((window, key, scancode, action, mods) -> callback.invoke(key, scancode, action, mods));
     }
 
     public void setMouseButtonCallback(GLFWMouseButtonCallbackI callback) {
@@ -262,6 +248,128 @@ public class Window extends PointerHandle implements Destroyable {
         glfwSetScrollCallback(getHandle(), callback);
     }
 
+    public void setAspectRatio(int numer, int denom) {
+        glfwSetWindowAspectRatio(getHandle(), numer, denom);
+    }
+
+    public void setAttribute(int attribute, int value) {
+        glfwSetWindowAttrib(getHandle(), attribute, value);
+    }
+
+    public void setCloseCallback(GLFWWindowCloseCallbackI callback) {
+        glfwSetWindowCloseCallback(getHandle(), callback);
+    }
+
+    public void setContentScaleCallback(GLFWWindowContentScaleCallbackI callback) {
+        glfwSetWindowContentScaleCallback(getHandle(), callback);
+    }
+
+    public void setFocusCallback(GLFWWindowFocusCallbackI callback) {
+        glfwSetWindowFocusCallback(getHandle(), callback);
+    }
+
+    public void setIconifyCallback(GLFWWindowIconifyCallbackI callback) {
+        glfwSetWindowIconifyCallback(getHandle(), callback);
+    }
+
+    public void setMaximizeCallback(GLFWWindowMaximizeCallbackI callback) {
+        glfwSetWindowMaximizeCallback(getHandle(), callback);
+    }
+
+    public void setMonitor(Monitor monitor, int xpos, int ypos, int width, int height, int refreshRate) {
+        glfwSetWindowMonitor(getHandle(), monitor.getHandle(), xpos, ypos, width, height, refreshRate);
+    }
+
+    public void setMonitor(Monitor monitor, Position<Integer> position, Size<Integer> size, int refreshRate) {
+        setMonitor(monitor, position.getX(), position.getY(), size.getWidth(), size.getHeight(), refreshRate);
+    }
+
+    public void setMonitor(Monitor monitor, Geometry<Integer> geometry, int refreshRate) {
+        setMonitor(monitor, geometry.getPosition(), geometry.getSize(), refreshRate);
+    }
+
+    public void setOpacity(float opacity) {
+        glfwSetWindowOpacity(getHandle(), opacity);
+    }
+
+    public void setPosition(int x, int y) {
+        glfwSetWindowPos(getHandle(), x, y);
+    }
+
+    public void setPosition(@NotNull Position<Integer> position) {
+        setPosition(position.getX(), position.getY());
+    }
+
+    public void setPositionCallback(GLFWWindowPosCallbackI callback) {
+        glfwSetWindowPosCallback(getHandle(), callback);
+    }
+
+    public void setRefreshCallback(GLFWWindowRefreshCallbackI callback) {
+        glfwSetWindowRefreshCallback(getHandle(), callback);
+    }
+
+    public void setSize(int width, int height) {
+        glfwSetWindowSize(getHandle(), width, height);
+    }
+
+    public void setSize(@NotNull Size<Integer> size) {
+        setSize(size.getWidth(), size.getHeight());
+    }
+
+    public void setSizeCallback(GLFWWindowSizeCallbackI callback) {
+        glfwSetWindowSizeCallback(getHandle(), callback);
+    }
+
+    public void setSizeLimits(int minWidth, int minHeight, int maxWidth, int maxHeight) {
+        glfwSetWindowSizeLimits(getHandle(), maxWidth, maxHeight, maxWidth, maxHeight);
+    }
+
+    public void setSizeLimits(Size<Integer> minSize, Size<Integer> maxSize) {
+        setSizeLimits(minSize.getWidth(), minSize.getHeight(), maxSize.getWidth(), maxSize.getHeight());
+    }
+
+    public void setTitle(CharSequence title) {
+        glfwSetWindowTitle(getHandle(), title);
+    }
+
+    public void setTitle(ByteBuffer title) {
+        glfwSetWindowTitle(getHandle(), title);
+    }
+
+    public void setUserPointer(long pointer) {
+        glfwSetWindowUserPointer(getHandle(), pointer);
+    }
+
+    public void show() {
+        glfwShowWindow(getHandle());
+    }
+
+    public void swapBuffers() {
+        glfwSwapBuffers(getHandle());
+    }
+
+    public boolean shouldClose() {
+        return glfwWindowShouldClose(getHandle());
+    }
+
+    public void setShouldClose(boolean shouldClose) {
+        glfwSetWindowShouldClose(getHandle(), shouldClose);
+    }
+
+    public Geometry<Integer> getGeometry() {
+        Size<Integer> size = getSize();
+        Position<Integer> position = getPosition();
+        return new Geometry<>(position, size);
+    }
+
+    public void setGeometry(@NotNull Geometry<Integer> geometry) {
+        setGeometry(geometry.getX(), geometry.getY(), geometry.getWidth(), geometry.getHeight());
+    }
+
+    public void setGeometry(int x, int y, int width, int height) {
+        setPosition(x, y);
+        setSize(width, height);
+    }
 
     public final boolean isDestroyed() {
         return this.destroyed;
@@ -275,7 +383,8 @@ public class Window extends PointerHandle implements Destroyable {
         this.destroyed = true;
     }
 
-    public void setShouldClose(boolean shouldClose) {
-        glfwSetWindowShouldClose(getHandle(), shouldClose);
+    public void freeCallbacks() {
+        glfwFreeCallbacks(getHandle());
     }
+
 }
