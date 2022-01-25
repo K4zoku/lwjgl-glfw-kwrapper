@@ -39,7 +39,9 @@ public class HelloWorld {
         });
 
         // Get the resolution of the primary monitor
-        GLFWVidMode vidMode = Monitor.getPrimaryMonitor().getVideoMode();
+        Monitor primaryMonitor = Monitor.getPrimaryMonitor();
+        assert primaryMonitor != null;
+        GLFWVidMode vidMode = primaryMonitor.getVideoMode();
         assert vidMode != null;
 
         // Get window size
